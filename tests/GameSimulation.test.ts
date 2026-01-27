@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest';
-import {Snake} from '../src/domain/Snake'; // Snake는 이미 만드셨죠?
+import {Snake} from '../src/domain/Snake';
 import {Board} from '../src/domain/Board';
 import {Position} from '../src/value-objects/Position';
 import {Direction} from "../src/value-objects/Direction";
