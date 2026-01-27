@@ -8,7 +8,7 @@ export class Position {
 
     // Java의 equals() 오버라이딩과 같다.
     // 객체 주소값이 아닌 실제 좌표값으로 비교하기 위함.
-    isEqual(other: Position): boolean {
-        return this.x === other.x && this.y === other.y;
+    isEqual(checkValue: Position): boolean {
+        return this.x === checkValue.x && this.y === checkValue.y;
     }
 }
