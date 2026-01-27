@@ -1,16 +1,17 @@
 import {Position} from '../value-objects/Position';
 import {Direction, DirectionUtil} from '../value-objects/Direction';
+import {Food, FoodType} from "./Food";
 
 export class Snake {
     private _body: Position[];
     private _currentDirection: Direction
 
-    constructor(startPosition: Position, startDirection: Direction, startLength: number = 1) {
+    constructor(startPosition: Position, startDirection: Direction, length: number = 1) {
         this._body = [startPosition]; // 초기 몸의 길이
         this._currentDirection = startDirection;// 초기 방향
 
-        if (startLength > 1) {// 초기 몸의 길이가 1보다 크다면 설정값을 _body에 추가
-            this.initBody(startLength)
+        if (length > 1) {// 초기 몸의 길이가 1보다 크다면 설정값을 _body에 추가
+            this.initBody(length)
         }
     }
 
@@ -58,4 +59,16 @@ export class Snake {
         return new Position(current.x + delta.dx, current.y + delta.dy);
     }
 
+    // 섭취 메서드
+    eat(food: Food) {
+        if (food.type === FoodType.GROW) {
+            this.grow();
+        }
+    }
+
+    // 성장 메서드
+    private grow() {
+        const tail = this._body[this._body.length - 1];
+        this._body.push(new Position(tail.x, tail.y));
+    }
 }
