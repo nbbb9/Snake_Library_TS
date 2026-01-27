@@ -20,7 +20,7 @@ export class Board {
     }
 
     // 충돌 여부 판단 메서드. 내부에 있으면 충돌이 아니고,
-    // 내부에 없으면 충돌이므로 isIndside의 반대값을 리턴
+    // 내부에 없으면 충돌이므로 isInside의 반대값을 리턴
     public isCollide(position: Position): boolean {
         return !this.isInside(position);
     }

@@ -1,6 +1,6 @@
 
 export class Position {
-    // 생성자(constructor)에서 'public readonly'를 쓰면 멤버 변수 선언과 초기가 동시에 가능하다.
+    // 생성자(constructor)에서 public readonly를 쓰면 멤버 변수 선언과 초기가 동시에 가능하다.
     constructor(
         public readonly x: number,
         public readonly y: number
