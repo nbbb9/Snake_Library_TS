@@ -28,22 +28,28 @@ export class ConsoleDebugger {
 
         // y축 루프
         for (let y = 0; y < height; y++) {
-            let row = '|';// 왼쪽 벽
+            let row = '|'; // 왼쪽 벽
             // x축 루프
             for (let x = 0; x < width; x++) {
                 const currentKey = `${x},${y}`;
 
-                if (currentKey === headCoord) {
-                    row += 'H'; // 머리
-                } else if (food && currentKey === foodCoord) {
+                // [수정 핵심] cell 변수에 "출력할 문자 + 공백여부"를 미리 담습니다.
+                // 목표: 모든 칸을 "시각적 너비 2칸"으로 맞추기
 
-                    row += (food.type === FoodType.GROW) ? '🍎' : '🍄';
+                let cell = '';
+
+                if (currentKey === headCoord) {
+                    cell = 'H '; // 알파벳(1) + 공백(1) = 2칸
+                } else if (food && currentKey === foodCoord) {
+                    // 이모지(2) = 2칸 (공백 없음!)
+                    cell = (food.type === FoodType.GROW) ? '🍎' : '🍄';
                 } else if (bodyCoords.includes(currentKey)) {
-                    row += 'o'; // 몸통
+                    cell = 'o '; // 알파벳(1) + 공백(1) = 2칸
                 } else {
-                    row += '.'; // 빈 공간
+                    cell = '. '; // 점(1) + 공백(1) = 2칸
                 }
-                row += ' '; // 가독성을 위한 공백
+
+                row += cell;
             }
             row += '|'; // 오른쪽 벽
             output += row + '\n';
