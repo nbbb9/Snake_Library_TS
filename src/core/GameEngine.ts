@@ -9,25 +9,19 @@ export class GameEngine {
     private _board: Board;
     private _status: GameStatus;
 
-    constructor(width: number, height: number) {
-        this._board = new Board(width, height);
-
-        // 뱀을 맵의 정중앙에 배치 (Math.floor로 정수 좌표 보장)
-        const center = new Position(Math.floor(width / 2), Math.floor(height / 2));
-
-        // 길이 3, 오른쪽을 보는 뱀 생성
-        this._snake = new Snake(center, Direction.RIGHT, 3);
-
-        // 초기 상태는 READY
+    constructor(boardWidth: number, boardHeight: number, snakeStartPosition: Position, snakeStartDirection: Direction, snakeStartLength: number = 1) {
+        this._board = new Board(boardWidth, boardHeight);
+        // 여기서 뱀의 시작 지점이 맵의 사이즈 밖이라면 에러 로직 추가해야함.
+        this._snake = new Snake(snakeStartPosition, snakeStartDirection, snakeStartLength);
         this._status = GameStatus.READY;
     }
 
-    // --- [Getters] 외부에서 상태를 읽기 위한 메서드들 ---
+    // --- 외부에서 상태를 읽기 위한 메서드들 ---
     get status(): GameStatus { return this._status; }
     get snake(): Snake { return this._snake; }
     get board(): Board { return this._board; }
 
-    // --- [Actions] 외부에서 호출하는 조작 메서드들 ---
+    // --- 외부에서 호출하는 조작 메서드들 ---
 
     /**
      * 게임을 시작 상태로 변경합니다.
@@ -39,9 +33,9 @@ export class GameEngine {
     }
 
     /**
-     * 게임의 시간을 한 단계 진행시킵니다. (Step)
+     * 게임의 시간을 한 단계 진행시킵니다.
      * 이 메서드를 1초에 한번 호출하면 턴제 게임, 0.1초에 한번 호출하면 리얼타임 게임이 됩니다.
-     * * @param inputDirection (선택) 사용자가 입력한 방향. 없으면 가던 방향으로 계속 감.
+     * @param inputDirection (선택) 사용자가 입력한 방향. 없으면 가던 방향으로 계속 감.
      * @returns 진행 결과 상태
      */
     step(inputDirection?: Direction): GameStatus {
@@ -50,11 +44,10 @@ export class GameEngine {
             return this._status;
         }
 
-        // 1. 이동할 방향 결정
-        // 입력이 있으면 그 방향으로, 없으면 뱀이 원래 가던 방향으로
+        // 이동할 방향 결정 입력이 있으면 그 방향으로, 없으면 뱀이 원래 가던 방향으로
         const nextDirection = inputDirection ?? this._snake.direction;
 
-        // 2. 뱀 이동 시도
+        // 뱀 이동 시도
         try {
             this._snake.move(nextDirection);
         } catch (e) {
