@@ -8,6 +8,7 @@ import {Food} from "../src/domain/Food";
 import {GameEngine} from "../src/core/GameEngine"
 
 import { ConsoleDebugger } from "../src/utils/ConsoleDebugger";
+import {GameStatus} from "../src";
 
 describe('게임 시뮬레이션: 이동과 충돌', () => {
 
@@ -107,6 +108,81 @@ describe("게임 엔진 테스트", () => {
 
     });
 })
+
+// 랜덤 방향을 반환하는 봇(Bot) 함수
+function getRandomDirection(): Direction {
+    const dirs = [Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT];
+    return dirs[Math.floor(Math.random() * dirs.length)];
+}
+
+describe('AI 봇 시뮬레이션', () => {
+
+    it('봇이 랜덤하게 움직이며 음식을 먹고, 벽에 충돌할 때까지 생존한다', () => {
+        // 1. [중요] GameEngine 생성자 매개변수에 맞춰서 초기화
+        // - 맵 크기: 10 x 10
+        // - 시작 위치: (5, 5)
+        // - 시작 방향: 오른쪽
+        // - 시작 길이: 3
+        const width = 10;
+        const height = 10;
+        const startPos = new Position(5, 5);
+        const engine = new GameEngine(width, height, startPos, Direction.RIGHT, 3);
+
+        // 시각화 도구 연결
+        const debuggerView = new ConsoleDebugger(engine);
+
+        // 2. 게임 시작
+        engine.start();
+        console.log("\n=== 🎮 GAME START (Auto Bot) ===");
+        debuggerView.print("Turn 0 (Start)");
+
+        let turn = 0;
+        const MAX_TURNS = 200; // 무한 루프 방지용 (200턴 넘으면 강제 종료)
+        let eatenFoodCount = 0;
+
+        // 3. 게임 루프 (엔진 상태가 PLAYING인 동안 계속 반복)
+        while (engine.status === GameStatus.PLAYING && turn < MAX_TURNS) {
+            turn++;
+
+            // [봇의 판단]
+            // 30% 확률로 방향을 랜덤하게 바꾸고, 70% 확률로 직진(undefined)
+            // (너무 자주 바꾸면 제자리에서 빙빙 돌다가 빨리 죽어서 확률을 둠)
+            let inputDir: Direction | undefined = undefined;
+            if (Math.random() < 0.3) {
+                inputDir = getRandomDirection();
+            }
+
+            // [엔진 실행] Step!
+            // 이전 턴의 뱀 길이 저장 (음식 먹었는지 확인용)
+            const prevLength = engine.snake.body.length;
+
+            engine.step(inputDir);
+
+            // [로그 출력]
+            const moveLog = inputDir !== undefined ? `방향전환(${Direction[inputDir]})` : "직진";
+
+            // 음식을 먹었는지 체크 (길이가 변했거나, 나중에 독버섯이면 줄어들 수도 있음)
+            if (engine.snake.body.length > prevLength) {
+                eatenFoodCount++;
+                console.log(`\n🍎 음식을 먹었습니다. (현재 길이: ${engine.snake.body.length})`);
+            }
+
+            debuggerView.print(`Turn ${turn} : ${moveLog}`);
+        }
+
+        // 4. 종료 결과 출력
+        console.log(`\n=== 🏁 GAME OVER ===`);
+        console.log(`총 생존 턴: ${turn}`);
+        console.log(`먹은 음식 수: ${eatenFoodCount}`);
+        console.log(`최종 길이: ${engine.snake.body.length}`);
+        console.log(`종료 사유: ${GameStatus[engine.status]}`); // GAME_OVER or PLAYING(Max turn)
+
+        // 5. 검증 (Assertions)
+        // 벽에 박아서 죽었거나, 200턴을 다 채워서 강제 종료되었거나 둘 중 하나여야 함.
+        // 즉, READY 상태만 아니면 됨.
+        expect(engine.status).not.toBe(GameStatus.READY);
+    });
+});
 
 // 시각화 헬퍼 함수
 function printGameState(board: Board, snake: Snake, food: Food | null, stepName: string) {

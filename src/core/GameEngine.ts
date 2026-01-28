@@ -79,7 +79,14 @@ export class GameEngine {
         }
 
         if (this._food && this._food.position.isEqual(this._snake.head)) {
-            // TODO: 음식 효과 적용 (grow or poison)
+            this._snake.eat(this._food);
+            // console.log(`[Engine] Ate ${FoodType[this._food.type]}`);
+            // 독을 먹어서 몸이 사라졌다면(길이 0) 게임 오버
+            if (this._snake.body.length === 0) {
+                this._status = GameStatus.GAME_OVER;
+                return this._status;
+            }
+
             this._lastFoodPosition = this._food.position; // 먹힌 위치 기억
             this._food = null; // 음식 사라짐
         }

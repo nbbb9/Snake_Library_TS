@@ -37,7 +37,7 @@ export class ConsoleDebugger {
                     row += 'H'; // 머리
                 } else if (food && currentKey === foodCoord) {
 
-                    row += (food.type === FoodType.GROW) ? 'G' : 'P'; // 타입에 따라 다른 글자로 표현
+                    row += (food.type === FoodType.GROW) ? '🍎' : '🍄';
                 } else if (bodyCoords.includes(currentKey)) {
                     row += 'o'; // 몸통
                 } else {

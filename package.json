@@ -7,7 +7,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "./node_modules/.bin/tsc --noEmit && ./node_modules/.bin/vite build",
-    "test": "./node_modules/.bin/vitest"
+    "test": "./node_modules/.bin/vitest",
+    "play": "npx ts-node src/play.ts"
   },
   "devDependencies": {
     "@types/node": "^25.0.10",
