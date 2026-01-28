@@ -29,7 +29,7 @@ export class Snake {
         }
     }
 
-    // 외부에서는 뱀의 몸통을 읽기만 가능
+    // 몸통 위치 반환
     get body(): Position[] {
         return [...this._body]; // [...this._body] : 스프레드 연산자. 원본 배열의 '복사본'을 반환. (방어적 복사)
     }
@@ -37,6 +37,11 @@ export class Snake {
     // 머리 위치 반환
     get head(): Position {
         return this._body[0];
+    }
+
+    // 진행 방향 반환
+    get direction(): Direction {
+        return this._currentDirection;
     }
 
     // 이동 메서드

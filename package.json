@@ -2,14 +2,19 @@
   "name": "Snake_lib",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
+  "main": "dist/index.umd.js",
+  "module": "dist/index.es.js",
+  "types": "dist/index.d.ts",
+  "type": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --noEmit && vite build",
     "test": "./node_modules/.bin/vitest"
   },
   "devDependencies": {
+    "@types/node": "^25.0.10",
     "typescript": "^5.5.3",
     "vite": "^7.3.1",
+    "vite-plugin-dts": "^4.5.4",
     "vitest": "^4.0.17"
   },
   "private": true

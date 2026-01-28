@@ -1,6 +1,9 @@
 
 export enum Direction {
-    UP, DOWN, LEFT, RIGHT
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT
 }
 
 // 방향 관련 로직 Util
