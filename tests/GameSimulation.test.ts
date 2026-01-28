@@ -5,6 +5,8 @@ import {Position} from '../src/value-objects/Position';
 import {Direction} from "../src/value-objects/Direction";
 import {Food} from "../src/domain/Food";
 
+import {GameEngine} from "../src/core/GameEngine"
+
 describe('게임 시뮬레이션: 이동과 충돌', () => {
 
     it('뱀이 맵 끝까지 이동하다가 벽에 부딪혀야 한다', () => {
@@ -86,6 +88,22 @@ describe("먹이 테스트", () => {
         expect(snake.body.length).toBe(4);
 
     })
+})
+
+describe("게임 엔진 테스트", () => {
+    it('', () => {
+        const snakeStartPosition = new Position(5, 5)
+        const engine = new GameEngine(10, 10, snakeStartPosition, Direction.RIGHT, 3)
+
+        engine.start();
+
+        printGameState(engine.board, engine.snake, null, "시작")
+
+        engine.step(Direction.RIGHT);
+
+        printGameState(engine.board, engine.snake, null, "한칸 이동")
+
+    });
 })
 
 // 시각화 헬퍼 함수
