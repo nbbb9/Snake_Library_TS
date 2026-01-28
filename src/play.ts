@@ -80,11 +80,11 @@ function printMenu() {
     console.log("=================================");
     console.log("");
     console.log("   1. Auto Mode (Real-time)");
-    console.log("      - 저절로 움직임");
+    console.log("      - 자동 직진");
     console.log("      - 방향키로 방향만 전환");
     console.log("");
     console.log("   2. Manual Mode (Turn-based)");
-    console.log("      - 가만히 멈춰있음");
+    console.log("      - 수동 전진");
     console.log("      - 방향키를 눌러야 한 칸 이동");
     console.log("");
     console.log("=================================");
@@ -120,23 +120,18 @@ function startAutoMode() {
 function startManualMode() {
     currentMode = 'MANUAL';
     engine.start();
-
-    // 첫 화면 그리기 (아직 안 움직임)
     console.clear();
-    debugView.print("👤 Manual Mode: Press Arrow Keys to Move");
+    debugView.print("👤 수동모드 : 방향키로 움직일 수 있습니다.");
 }
 
 // 공통: 게임 로직 한 단계 실행 및 화면 갱신
 function runGameStep(dir?: Direction) {
     console.clear();
-
     // 엔진 실행
     engine.step(dir);
-
     // 화면 그리기
     const modeTitle = currentMode === 'AUTO' ? "🤖 Auto Mode" : "👤 Manual Mode";
     debugView.print(`${modeTitle} (Ctrl+C to Exit)`);
-
     // 게임 오버 체크
     if (engine.status === GameStatus.GAME_OVER) {
         console.log("\n💀 GAME OVER! 💀");
