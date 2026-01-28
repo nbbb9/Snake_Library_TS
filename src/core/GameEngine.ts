@@ -12,6 +12,7 @@ export class GameEngine {
     private _food: Food | null = null;
     private _lastFoodPosition: Position | null = null;
     private readonly FOOD_SPAWN_CHANCE = 0.1; // 음식 생성 확률 ( 0.1 = 10% 확률로 매 step마다 생성 시도)
+    private readonly POISON_LIFETIME = 10;
 
     constructor(
         boardWidth: number,
@@ -57,6 +58,12 @@ export class GameEngine {
         // 음식이 맵에 존재하지 않을경우 랜덤으로 음식을 생성한다.
         if (this._food === null) {
             this.trySpawnFood();
+        } else {
+            this._food.decay(); // 음식이 존재한다면 음식의 수명을 깎는다.
+
+            if (this._food.isExpired) { // 음식의 수명이 다했다면 제거
+                this._food = null;
+            }
         }
 
         // 이동할 방향 결정 입력이 있으면 그 방향으로, 없으면 뱀이 원래 가던 방향으로
@@ -112,7 +119,8 @@ export class GameEngine {
         const position = this.findValidFoodPosition();
         if (position) {
             const type = this.getRandomFoodType();
-            this._food = new Food(position, type);
+            const lifeTime = (type === FoodType.POISON) ? this.POISON_LIFETIME : Infinity;
+            this._food = new Food(position, type, lifeTime);
         }
     }
 
