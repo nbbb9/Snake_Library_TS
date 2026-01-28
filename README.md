@@ -23,7 +23,7 @@ y축은 아래로 갈 수록 값이 커진다. (Excel을 생각하면 편함)
 snake-game-lib/
 ├── src/
 │   ├── core/                  # 코어. 실제 구현부
-│		│   ├── GameEngine.ts      # 게임 엔진
+│	│   ├── GameEngine.ts      # 게임 엔진
 │   │   └── GameStatus.ts      # 게임 상태(Enum)
 │   │
 │   ├── domain/                # 핵심 비즈니스 로직 (Entities)

@@ -78,13 +78,11 @@ export class Snake {
             this.cut();
         }
     }
-
     // 성장 메서드
     private grow() {
         const tail: Position = this._body[this._body.length - 1];
         this._body.push(new Position(tail.x, tail.y));
     }
-
     // 축소 메서드
     private cut() {
         this._body.pop();

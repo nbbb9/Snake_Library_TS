@@ -15,14 +15,7 @@ export class Food {
         this.expiresIn = expiresIn;
     }
 
-    // 턴이 지날 때마다 수명 감소
-    decay(): void {
-        if (this.expiresIn !== Infinity) {
-            this.expiresIn--;
-        }
-    }
-
-    // 수명이 다했는지 확인
+    // 파기 여부 확인
     get isExpired(): boolean {
         return this.expiresIn <= 0;
     }
@@ -33,6 +26,15 @@ export class Food {
 
     get type() : FoodType {
         return this._type;
+    }
+
+    /**
+     * 부패 : 음식의 수명을 깎는다
+     */
+    decay(): void {
+        if (this.expiresIn !== Infinity) {
+            this.expiresIn--;
+        }
     }
 
 }

@@ -12,7 +12,7 @@ export class GameEngine {
     private _food: Food | null = null;
     private _lastFoodPosition: Position | null = null;
     private readonly FOOD_SPAWN_CHANCE = 0.1; // 음식 생성 확률 ( 0.1 = 10% 확률로 매 step마다 생성 시도)
-    private readonly POISON_LIFETIME = 10;
+    private readonly POISON_LIFETIME = 10; // 독성 음식 생존 시간 (n턴)
 
     constructor(
         boardWidth: number,
@@ -22,7 +22,7 @@ export class GameEngine {
         snakeStartLength: number = 1
     ) {
         this._board = new Board(boardWidth, boardHeight);
-        // 여기서 뱀의 시작 지점이 맵의 사이즈 밖이라면 에러 로직 추가해야함.
+        //TODO 여기서 뱀의 시작 지점이 맵의 사이즈 밖이라면 에러 로직 추가해야함.
         this._snake = new Snake(snakeStartPosition, snakeStartDirection, snakeStartLength);
         this._status = GameStatus.READY;
     }
@@ -32,10 +32,8 @@ export class GameEngine {
     get board(): Board { return this._board; }
     get food() : Food | null { return this._food; }
 
-    // --- 외부에서 호출하는 조작 메서드들 ---
-
     /**
-     * 게임을 시작 상태로 변경합니다.
+     * 게임을 시작상태로 설정
      */
     start(): void {
         if (this._status === GameStatus.READY) {
@@ -45,9 +43,8 @@ export class GameEngine {
     }
 
     /**
-     * 게임의 시간을 한 단계 진행시킵니다.
-     * 이 메서드를 1초에 한번 호출하면 턴제 게임, 0.1초에 한번 호출하면 리얼타임 게임이 됩니다.
-     * @param inputDirection (선택) 사용자가 입력한 방향. 없으면 가던 방향으로 계속 감.
+     * 게임의 시간을 한 단계 진행
+     * @param inputDirection 사용자가 입력한 방향. 없으면 가던 방향으로 계속 감.
      * @returns 진행 결과 상태
      */
     step(inputDirection?: Direction): GameStatus {
@@ -55,8 +52,8 @@ export class GameEngine {
         if (this._status !== GameStatus.PLAYING) {
             return this._status;
         }
-        // 음식이 맵에 존재하지 않을경우 랜덤으로 음식을 생성한다.
-        if (this._food === null) {
+
+        if (this._food === null) { // 음식이 맵에 존재하지 않을경우 랜덤으로 음식을 생성한다.
             this.trySpawnFood();
         } else {
             this._food.decay(); // 음식이 존재한다면 음식의 수명을 깎는다.
@@ -78,7 +75,7 @@ export class GameEngine {
             this._snake.move(this._snake.direction);
         }
 
-        // 3. 벽 충돌 체크 (Rule Check)
+        // 벽 충돌 체크 (Rule Check)
         // 뱀의 머리가 보드 밖으로 나갔다면 게임 오버
         if (this._board.isCollide(this._snake.head)) {
             this._status = GameStatus.GAME_OVER;
@@ -93,7 +90,6 @@ export class GameEngine {
                 this._status = GameStatus.GAME_OVER;
                 return this._status;
             }
-
             this._lastFoodPosition = this._food.position; // 먹힌 위치 기억
             this._food = null; // 음식 사라짐
         }
@@ -101,19 +97,17 @@ export class GameEngine {
         return this._status;
     }
 
-    // --- 음식 생성 관렴 메서드 ---
-
+    // --- 음식 생성 관련 메서드 ---
     /**
-     * 확률에 따라 음식을 생성합니다.
+     * 확률에 따라 음식을 생성
      */
     private trySpawnFood(): void {
         if (Math.random() < this.FOOD_SPAWN_CHANCE) {
             this.spawnFood();
         }
     }
-
     /**
-     * 음식을 생성합니다. (유효한 위치를 찾아서)
+     * 음식을 랜덤 위치에 생성
      */
     private spawnFood(): void {
         const position = this.findValidFoodPosition();
@@ -123,7 +117,6 @@ export class GameEngine {
             this._food = new Food(position, type, lifeTime);
         }
     }
-
     /**
      * 조건에 맞는 랜덤 타입 반환
      */
@@ -131,9 +124,8 @@ export class GameEngine {
         // 50:50 확률로 결정 (나중에 확률 조정 가능)
         return Math.random() < 0.5 ? FoodType.GROW : FoodType.POISON;
     }
-
     /**
-     * 유효한 빈 좌표를 찾습니다.
+     * 유효한 빈 좌표를 찾는다
      * @returns Position | null (맵이 꽉 차서 놓을 곳이 없으면 null)
      */
     private findValidFoodPosition(): Position | null {
@@ -154,21 +146,18 @@ export class GameEngine {
         // 50번 시도했는데도 자리가 없으면 이번엔 생성 포기 (다음 틱에 다시 시도)
         return null;
     }
-
     /**
-     * 해당 좌표가 음식 놓기에 안전한지 검사 (조건 1, 2)
+     * 해당 좌표가 음식 놓기에 안전한지 검사
      */
     private isValidPosition(pos: Position): boolean {
-        // 조건 1: 뱀의 몸통(머리 포함)과 겹치지 않을 것
+        // 뱀의 몸통(머리 포함)과 겹치지 않을 것
         // some 함수: 배열 요소 중 하나라도 조건을 만족하면 true
         const isOverlapSnake = this._snake.body.some(segment => segment.isEqual(pos));
         if (isOverlapSnake) return false;
-
-        // 조건 2: 바로 전에 생성된(먹힌) 위치와 같지 않을 것
+        // 바로 전에 생성된(먹힌) 위치와 같지 않을 것
         if (this._lastFoodPosition && this._lastFoodPosition.isEqual(pos)) {
             return false;
         }
-
         return true;
     }
 

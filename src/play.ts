@@ -8,25 +8,27 @@ import { ConsoleDebugger } from './utils/ConsoleDebugger';
 // --- [설정] ---
 const BOARD_WIDTH = 10;
 const BOARD_HEIGHT = 10;
-const GAME_SPEED_MS = 100; // Auto 모드 속도
+const GAME_SPEED_MS = 500; // Auto 모드 속도
 
-// 1. 엔진 및 디버거 초기화
+// 엔진 및 디버거 초기화
 const engine = new GameEngine(
-    BOARD_WIDTH, BOARD_HEIGHT,
+    BOARD_WIDTH,
+    BOARD_HEIGHT,
     new Position(5, 5),
     Direction.RIGHT,
     3
 );
+
 const debugView = new ConsoleDebugger(engine);
 
-// 2. 키 입력 설정
+// 키 입력 설정
 readline.emitKeypressEvents(process.stdin);
 if (process.stdin.isTTY) {
     process.stdin.setRawMode(true);
 }
 
-// 3. 상태 관리
-type GameMode = 'NONE' | 'AUTO' | 'MANUAL';
+// 상태 관리
+type GameMode = 'NONE' | 'AUTO' | 'MANUAL'; // 게임 모드
 let currentMode: GameMode = 'NONE';
 let nextAutoDirection: Direction | undefined = undefined; // Auto 모드용 입력 버퍼
 
@@ -62,7 +64,7 @@ process.stdin.on('keypress', (str, key) => {
             runGameStep(inputDir); // 입력한 방향으로 즉시 이동
         } else {
             // 방향키가 아닌 다른 키를 누르면? (선택사항: 무시하거나 가던 방향으로 이동)
-            // 여기서는 '대기'를 원하셨으므로 아무 반응 안 함.
+            // 여기서는 아무 반응 안 함.
         }
     }
 });
@@ -70,9 +72,7 @@ process.stdin.on('keypress', (str, key) => {
 // 초기 메뉴 출력
 printMenu();
 
-
 // --- [함수 정의] ---
-
 function printMenu() {
     console.clear();
     console.log("=================================");
