@@ -68,10 +68,10 @@ describe("먹이 테스트", () => {
 
         printGameState(board, snake, food, "시작");
 
-        while(!snake.head.isEqual(food.location)){
+        while(!snake.head.isEqual(food.position)){
             snake.move(Direction.RIGHT);
             printGameState(board, snake, food, "우측 1 이동");
-            if(food && snake.head.isEqual(food.location)){
+            if(food && snake.head.isEqual(food.position)){
                 snake.eat(food);
                 food = null;
                 console.log("먹이를 먹었습니다.");
@@ -120,7 +120,7 @@ function printGameState(board: Board, snake: Snake, food: Food | null, stepName:
     // 먹이 좌표 변환 (먹이가 존재할 경우에만)
     let foodCoord = "";
     if (food) {
-        foodCoord = `${food.location.x},${food.location.y}`;
+        foodCoord = `${food.position.x},${food.position.y}`;
     }
 
     let output = `\n--- [${stepName}] ---\n`;

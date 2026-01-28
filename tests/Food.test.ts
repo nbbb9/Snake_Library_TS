@@ -11,7 +11,7 @@ describe('Food 객체', () => {
 
         const food = new Food(randomPosition);
 
-        expect(food.location.x).toBe(x);
-        expect(food.location.y).toBe(y);
+        expect(food.position.x).toBe(x);
+        expect(food.position.y).toBe(y);
     });
 })

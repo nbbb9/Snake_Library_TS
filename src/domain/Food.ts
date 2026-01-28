@@ -5,16 +5,16 @@ export enum FoodType {
 }
 
 export class Food {
-    private _location: Position;
+    private _position: Position;
     private _type: FoodType;
 
     constructor(location: Position, type: FoodType = FoodType.GROW) {
-        this._location = location;
+        this._position = location;
         this._type = type;
     }
 
-    get location(): Position {
-        return this._location;
+    get position(): Position {
+        return this._position;
     }
 
     get type() : FoodType {
