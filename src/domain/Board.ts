@@ -8,8 +8,11 @@ export class Board {
         this.width = width;
         this.height = height;
     }
-
-    // 내부에 있는지 여부 판단 메서드
+    /**
+     * 인자로 받은 좌표가 맵 내부에 존재하는지 안하는지 판단
+     * @param position
+     * @return boolean
+     */
     public isInside(position: Position): boolean {
         return (
             position.x >= 0 &&
@@ -18,9 +21,11 @@ export class Board {
             position.y < this.height
         );
     }
-
-    // 충돌 여부 판단 메서드. 내부에 있으면 충돌이 아니고,
-    // 내부에 없으면 충돌이므로 isInside의 반대값을 리턴
+    /**
+     * 인자로 받은 좌표의 충돌 여부 판단
+     * @param position
+     * @return boolean
+     */
     public isCollide(position: Position): boolean {
         return !this.isInside(position);
     }

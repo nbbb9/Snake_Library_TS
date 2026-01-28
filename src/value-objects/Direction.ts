@@ -8,7 +8,11 @@ export enum Direction {
 
 // 방향 관련 로직 Util
 export const DirectionUtil = {
-    // 반대 방향을 찾는 메서드
+    /**
+     * 인자로 받은 진행방향의 반대 방향 반환
+     * @param direction
+     * @returns Direction
+     */
     getOppositeDirection(direction: Direction) : Direction {
         switch (direction) {
             case Direction.UP: return Direction.DOWN;
@@ -17,8 +21,11 @@ export const DirectionUtil = {
             case Direction.RIGHT: return Direction.LEFT;
         }
     },
-
-    // 특정 방향으로 이동할 때의 좌표 변화량
+    /**
+     * 인자로 받은 진행방향의 실제 좌표 Delta 값
+     * @param direction
+     * @returns { dx: number, dy: number }
+     */
     getMoveDelta(direction: Direction) : { dx: number, dy: number } {
         switch (direction) {
             case Direction.UP: return { dx: 0, dy: -1 };

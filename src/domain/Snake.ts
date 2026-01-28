@@ -29,22 +29,23 @@ export class Snake {
         }
     }
 
-    // 몸통 위치 반환
     get body(): Position[] {
         return [...this._body]; // [...this._body] : 스프레드 연산자. 원본 배열의 '복사본'을 반환. (방어적 복사)
     }
 
-    // 머리 위치 반환
     get head(): Position {
         return this._body[0];
     }
 
-    // 진행 방향 반환
     get direction(): Direction {
         return this._currentDirection;
     }
 
-    // 이동 메서드
+    /**
+     * 인자로 받은 현재 이동방향에 따라 위치를 이동시킨다.
+     * @param direction
+     * @return void
+     */
     move(direction: Direction): void {
         // 현재 진행 방향의 반대 방향을 구하고 그쪽으로 꼬리를 늘린다.
         if (direction === DirectionUtil.getOppositeDirection(this._currentDirection)) {
@@ -64,16 +65,28 @@ export class Snake {
         return new Position(current.x + delta.dx, current.y + delta.dy);
     }
 
-    // 섭취 메서드
+    /**
+     * 뱀의 섭취 메서드. 음식의 타입에 따라 성장 또는 축소 가능
+     * @param food
+     * @return void
+     */
     eat(food: Food) {
         if (food.type === FoodType.GROW) {
             this.grow();
+        }
+        if (food.type === FoodType.POISON) {
+            this.cut();
         }
     }
 
     // 성장 메서드
     private grow() {
-        const tail = this._body[this._body.length - 1];
+        const tail: Position = this._body[this._body.length - 1];
         this._body.push(new Position(tail.x, tail.y));
+    }
+
+    // 축소 메서드
+    private cut() {
+        this._body.pop();
     }
 }
