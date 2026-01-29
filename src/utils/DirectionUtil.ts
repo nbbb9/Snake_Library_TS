@@ -1,10 +1,4 @@
-
-export enum Direction {
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT
-}
+import {Direction} from "../enums/Direction";
 
 // 방향 관련 로직 Util
 export const DirectionUtil = {

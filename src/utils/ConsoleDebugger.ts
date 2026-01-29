@@ -1,6 +1,6 @@
 import { GameEngine } from '../core/GameEngine';
 import { GameStatus } from '../core/GameStatus';
-import {FoodType} from "../domain/Food";
+import {FoodType} from "../enums/FoodType";
 
 export class ConsoleDebugger {
     // 엔진을 주입받는다 (Dependency Injection)

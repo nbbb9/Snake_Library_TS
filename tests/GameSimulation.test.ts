@@ -2,7 +2,7 @@ import {describe, expect, it} from 'vitest';
 import {Snake} from '../src/domain/Snake';
 import {Board} from '../src/domain/Board';
 import {Position} from '../src/value-objects/Position';
-import {Direction} from "../src/value-objects/Direction";
+import {Direction} from "../src/enums/Direction";
 import {Food} from "../src/domain/Food";
 
 import {GameEngine} from "../src/core/GameEngine"

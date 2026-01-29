@@ -1,6 +1,8 @@
 import {Position} from '../value-objects/Position';
-import {Direction, DirectionUtil} from '../value-objects/Direction';
-import {Food, FoodType} from "./Food";
+import {Direction} from '../enums/Direction';
+import {DirectionUtil} from "../utils/DirectionUtil";
+import {Food} from "./Food";
+import {FoodType} from "../enums/FoodType";
 
 export class Snake {
     private _body: Position[];

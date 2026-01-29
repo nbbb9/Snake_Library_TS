@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'vitest';
 import {Snake} from '../src/domain/Snake';
 import {Position} from '../src/value-objects/Position';
-import {Direction} from '../src/value-objects/Direction'
+import {Direction} from '../src/enums/Direction'
 
 describe('Snake 객체', () => {
     it('초기 위치에서 생성되어야 한다', () => {

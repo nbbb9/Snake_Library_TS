@@ -1,9 +1,10 @@
 import { Snake } from '../domain/Snake';
 import { Board } from '../domain/Board';
-import { Direction } from '../value-objects/Direction';
+import { Direction } from '../enums/Direction';
 import { Position } from '../value-objects/Position';
 import { GameStatus } from './GameStatus';
-import {Food, FoodType} from "../domain/Food";
+import { Food } from "../domain/Food";
+import { FoodType } from "../enums/FoodType";
 
 export class GameEngine {
     private _snake: Snake;
