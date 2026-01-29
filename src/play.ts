@@ -44,8 +44,7 @@ process.stdin.on('keypress', (str, key) => {
         console.log("\n종료합니다.");
         process.exit();
     }
-
-    // A. 메뉴 선택 단계 (게임 시작 전)
+    // 메뉴 선택 단계 (게임 시작 전)
     if (currentMode === 'NONE') {
         if (key.name === '1') {
             startAutoMode();
@@ -54,21 +53,20 @@ process.stdin.on('keypress', (str, key) => {
         }
         return;
     }
-
-    // B. 게임 진행 중
+    // 게임 진행 중
     const inputDir = mapKeyToDirection(key.name);
 
     if (currentMode === 'AUTO') {
-        // Auto 모드: 키 입력은 '다음 방향 예약'만 함 (이동은 타이머가 함)
+        // Auto 모드: 키 입력은 '다음 방향 예약'만 함
         if (inputDir !== undefined) {
             nextAutoDirection = inputDir;
         }
     } else if (currentMode === 'MANUAL') {
-        // Manual 모드: 키 입력 즉시 1턴 진행 (Turn-Based)
+        // Manual 모드: 키 입력 즉시 1턴 진행
         if (inputDir !== undefined) {
             runGameStep(inputDir); // 입력한 방향으로 즉시 이동
         } else {
-            // 방향키가 아닌 다른 키를 누르면? (선택사항: 무시하거나 가던 방향으로 이동)
+            // 방향키가 아닌 다른 키를 누르면
             // 여기서는 아무 반응 안 함.
         }
     }
@@ -96,7 +94,7 @@ function printMenu() {
     console.log("Press '1' or '2' to start...");
 }
 
-// 1. Auto 모드 실행 (타이머 사용)
+// Auto 모드 실행 (타이머 사용)
 function startAutoMode() {
     currentMode = 'AUTO';
     soundPlayer.playBgm('audios/bgm.mp3', 0.5);
@@ -109,20 +107,13 @@ function startAutoMode() {
             return;
         }
 
-        // 봇 로직 (입력이 없으면 30% 확률로 랜덤)
-        if (nextAutoDirection === undefined && Math.random() < 0.3) {
-            // 봇이 랜덤하게 움직이게 하려면 여기서 nextAutoDirection 설정
-            // (사용자가 조작하는 느낌을 주려면 이 부분 제거하면 됨)
-            // 여기서는 '자동 직진'이 기본이므로, 그냥 둡니다.
-        }
-
         runGameStep(nextAutoDirection);
         nextAutoDirection = undefined; // 입력 초기화
 
     }, GAME_SPEED_MS);
 }
 
-// 2. Manual 모드 실행 (타이머 없음, 이벤트 기반)
+// Manual 모드 실행 (타이머 없음, 이벤트 기반)
 function startManualMode() {
     currentMode = 'MANUAL';
     soundPlayer.playBgm('audios/bgm.mp3', 0.5);
@@ -142,7 +133,7 @@ function runGameStep(dir?: Direction) {
     // 게임 오버 체크
     if (engine.status === GameStatus.GAME_OVER) {
         soundPlayer.stopBgm(); // 종료시 음악 정지
-        soundPlayer.playSfx('audios/gameover.mp3', 5.0);
+        soundPlayer.playSfx('audios/gameover.mp3', 0.2);
         console.log("\n💀 GAME OVER! 💀");
         setTimeout(() => {
             process.exit();

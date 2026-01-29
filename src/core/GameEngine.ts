@@ -18,6 +18,8 @@ export class GameEngine {
     private readonly FOOD_SPAWN_CHANCE = 0.1; // 음식 생성 확률 ( 0.1 = 10% 확률로 매 step마다 생성 시도)
     private readonly POISON_LIFETIME = 10; // 독성 음식 생존 시간 (n턴)
 
+    private _score: number = 0;
+
     private _soundPlayer?: ISoundPlayer;
 
     constructor(
@@ -33,12 +35,14 @@ export class GameEngine {
         this._snake = new Snake(snakeStartPosition, snakeStartDirection, snakeStartLength);
         this._status = GameStatus.READY;
         this._soundPlayer = soundPlayer;
+        this._score = 0;
     }
 
     get status(): GameStatus { return this._status; }
     get snake(): Snake { return this._snake; }
     get board(): Board { return this._board; }
     get food() : Food | null { return this._food; }
+    get score(): number { return this._score; }
 
     /**
      * 게임을 시작상태로 설정
@@ -96,9 +100,10 @@ export class GameEngine {
             // [옵셔널 체이닝]
             // soundPlayer가 있으면 play() 호출, 없으면 아무 일도 안 일어남 (에러 안 남)
             if (this._food.type === FoodType.GROW) {
-                this._soundPlayer?.playSfx('audios/eat-grow.mp3', 0.6);
+                this._score++;
+                this._soundPlayer?.playSfx('audios/eat-grow.mp3', 0.9);
             } else if (this._food.type === FoodType.POISON) {
-                this._soundPlayer?.playSfx('audios/eat-hurt.mp3', 0.6);
+                this._soundPlayer?.playSfx('audios/eat-hurt.mp3', 0.9);
             }
 
             this._snake.eat(this._food);
