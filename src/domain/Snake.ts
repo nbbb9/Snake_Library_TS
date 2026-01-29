@@ -31,17 +31,10 @@ export class Snake {
         }
     }
 
-    get body(): Position[] {
-        return [...this._body]; // [...this._body] : 스프레드 연산자. 원본 배열의 '복사본'을 반환. (방어적 복사)
-    }
-
-    get head(): Position {
-        return this._body[0];
-    }
-
-    get direction(): Direction {
-        return this._currentDirection;
-    }
+    // [...this._body] : 스프레드 연산자. 원본 배열의 '복사본'을 반환. (방어적 복사)
+    get body(): Position[] { return [...this._body]; }
+    get head(): Position { return this._body[0]; }
+    get direction(): Direction { return this._currentDirection; }
 
     /**
      * 인자로 받은 현재 이동방향에 따라 위치를 이동시킨다.
