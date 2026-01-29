@@ -1,6 +1,6 @@
 import readline from 'readline';
 import { GameEngine } from './core/GameEngine';
-import { GameStatus } from './core/GameStatus';
+import { GameStatus } from './enums/GameStatus';
 import { Direction } from './enums/Direction';
 import { Position } from './value-objects/Position';
 import { ConsoleDebugger } from './utils/ConsoleDebugger';

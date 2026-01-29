@@ -2,7 +2,7 @@ import { Snake } from '../domain/Snake';
 import { Board } from '../domain/Board';
 import { Direction } from '../enums/Direction';
 import { Position } from '../value-objects/Position';
-import { GameStatus } from './GameStatus';
+import { GameStatus } from '../enums/GameStatus';
 import { Food } from "../domain/Food";
 import { FoodType } from "../enums/FoodType";
 

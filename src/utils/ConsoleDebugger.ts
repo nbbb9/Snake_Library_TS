@@ -1,5 +1,5 @@
 import { GameEngine } from '../core/GameEngine';
-import { GameStatus } from '../core/GameStatus';
+import { GameStatus } from '../enums/GameStatus';
 import {FoodType} from "../enums/FoodType";
 
 export class ConsoleDebugger {

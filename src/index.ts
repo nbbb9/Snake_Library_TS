@@ -1,6 +1,6 @@
 
 export { GameEngine } from './core/GameEngine';
-export { GameStatus } from './core/GameStatus';
+export { GameStatus } from './enums/GameStatus';
 
 export { Direction } from './enums/Direction';
 export { Position } from './value-objects/Position';
