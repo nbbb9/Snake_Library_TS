@@ -1,4 +1,8 @@
-# TypeScript Snake Library
+# 🐍TypeScript Snake Library🐍
+
+# 🎮Clone후 게임 실행을 위한 단계🎮
+## 1. 프로젝트 경로에서 ```npm install``` 수행.
+## 2. 또는 프로젝트 경로에서 ```npm play``` 수행.
 
 # 00. Info
 
