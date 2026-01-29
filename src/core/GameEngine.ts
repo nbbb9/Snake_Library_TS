@@ -6,6 +6,8 @@ import { GameStatus } from '../enums/GameStatus';
 import { Food } from "../domain/Food";
 import { FoodType } from "../enums/FoodType";
 
+import { ISoundPlayer } from '../interfaces/ISoundPlayer'; // 인터페이스만 가져옴
+
 export class GameEngine {
     private _snake: Snake;
     private _board: Board;
@@ -16,17 +18,21 @@ export class GameEngine {
     private readonly FOOD_SPAWN_CHANCE = 0.1; // 음식 생성 확률 ( 0.1 = 10% 확률로 매 step마다 생성 시도)
     private readonly POISON_LIFETIME = 10; // 독성 음식 생존 시간 (n턴)
 
+    private _soundPlayer?: ISoundPlayer;
+
     constructor(
         boardWidth: number,
         boardHeight: number,
         snakeStartPosition: Position,
         snakeStartDirection: Direction,
-        snakeStartLength: number = 1
+        snakeStartLength: number = 1,
+        soundPlayer?: ISoundPlayer
     ) {
         this._board = new Board(boardWidth, boardHeight);
         // TODO 여기서 뱀의 시작 지점이 맵의 사이즈 밖이라면 에러 로직 추가해야함.
         this._snake = new Snake(snakeStartPosition, snakeStartDirection, snakeStartLength);
         this._status = GameStatus.READY;
+        this._soundPlayer = soundPlayer;
     }
 
     get status(): GameStatus { return this._status; }
@@ -87,6 +93,14 @@ export class GameEngine {
 
         // 먹이 섭취.
         if (this._food && this._food.position.isEqual(this._snake.head)) {
+            // [옵셔널 체이닝]
+            // soundPlayer가 있으면 play() 호출, 없으면 아무 일도 안 일어남 (에러 안 남)
+            if (this._food.type === FoodType.GROW) {
+                this._soundPlayer?.playSfx('audios/eat-grow.mp3', 0.6);
+            } else if (this._food.type === FoodType.POISON) {
+                this._soundPlayer?.playSfx('audios/eat-hurt.mp3', 0.6);
+            }
+
             this._snake.eat(this._food);
             if (this._snake.body.length === 0) {// 독을 먹어서 몸이 사라졌다면(길이 0) 게임 오버
                 this._status = GameStatus.GAME_OVER;

@@ -4,11 +4,14 @@ import { GameStatus } from './enums/GameStatus';
 import { Direction } from './enums/Direction';
 import { Position } from './value-objects/Position';
 import { ConsoleDebugger } from './utils/ConsoleDebugger';
+import { SoundPlayer } from './utils/SoundPlayer';
 
 // --- [설정] ---
 const BOARD_WIDTH = 10;
 const BOARD_HEIGHT = 10;
 const GAME_SPEED_MS = 500; // Auto 모드 속도
+
+const soundPlayer = new SoundPlayer(); // 음악 재생 객체
 
 // 엔진 및 디버거 초기화
 const engine = new GameEngine(
@@ -16,7 +19,8 @@ const engine = new GameEngine(
     BOARD_HEIGHT,
     new Position(5, 5),
     Direction.RIGHT,
-    3
+    3,
+    soundPlayer
 );
 
 const debugView = new ConsoleDebugger(engine);
@@ -36,6 +40,7 @@ let nextAutoDirection: Direction | undefined = undefined; // Auto 모드용 입�
 process.stdin.on('keypress', (str, key) => {
     // 공통: Ctrl+C 종료
     if (key.ctrl && key.name === 'c') {
+        soundPlayer.stopBgm(); // 음악 정지
         console.log("\n종료합니다.");
         process.exit();
     }
@@ -94,6 +99,7 @@ function printMenu() {
 // 1. Auto 모드 실행 (타이머 사용)
 function startAutoMode() {
     currentMode = 'AUTO';
+    soundPlayer.playBgm('audios/bgm.mp3', 0.5);
     engine.start();
 
     // 주기적으로 실행 (게임 루프)
@@ -119,6 +125,7 @@ function startAutoMode() {
 // 2. Manual 모드 실행 (타이머 없음, 이벤트 기반)
 function startManualMode() {
     currentMode = 'MANUAL';
+    soundPlayer.playBgm('audios/bgm.mp3', 0.5);
     engine.start();
     console.clear();
     debugView.print("👤 수동모드 : 방향키로 움직일 수 있습니다.");
@@ -134,8 +141,12 @@ function runGameStep(dir?: Direction) {
     debugView.print(`${modeTitle} (Ctrl+C to Exit)`);
     // 게임 오버 체크
     if (engine.status === GameStatus.GAME_OVER) {
+        soundPlayer.stopBgm(); // 종료시 음악 정지
+        soundPlayer.playSfx('audios/gameover.mp3', 5.0);
         console.log("\n💀 GAME OVER! 💀");
-        process.exit();
+        setTimeout(() => {
+            process.exit();
+        }, 3000);
     }
 }
 
