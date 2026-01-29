@@ -22,24 +22,35 @@ y축은 아래로 갈 수록 값이 커진다. (Excel을 생각하면 편함)
 ```
 snake-game-lib/
 ├── src/
-│   ├── core/                  # 코어. 실제 구현부
-│	│   ├── GameEngine.ts      # 게임 엔진
-│   │   └── GameStatus.ts      # 게임 상태(Enum)
+│   ├── core/                  # 게임 엔진
+│   │   └── GameEngine.ts      # 게임 루프 및 전체 조율 담당
 │   │
-│   ├── domain/                # 핵심 비즈니스 로직 (Entities)
-│   │   ├── Snake.ts           # 지렁이 객체
-│   │   ├── Food.ts            # 먹이 객체
+│   ├── domain/                # 핵심 비즈니스 로직 (상태와 행위를 가짐)
+│   │   ├── Snake.ts           # 지렁이 (Position, Direction 사용)
+│   │   ├── Food.ts            # 먹이 (Position, FoodType 사용)
 │   │   └── Board.ts           # 맵 정보, 충돌 체크 로직
 │   │
-│   ├── interfaces/            # 외부와 소통하기 위한 규약
+│   ├── enums/                 # 순수 상수 집합 (상태 없음, 로직 없음)
+│   │   ├── Direction.ts       # UP, DOWN, LEFT, RIGHT
+│   │   ├── FoodType.ts        # GROW, POISON
+│   │   └── GameStatus.ts      # READY, PLAYING, GAME_OVER
 │   │
-│   ├── value-objects/         # 불변 객체 (VO)
-│   │   ├── Position.ts        # x, y 좌표 (불변성 보장)
-│   │   └── Direction.ts       # Enum (UP, DOWN, LEFT, RIGHT)
+│   ├── value-objects/         # 데이터 + 불변 로직 (값 객체)
+│   │   └── Position.ts        # x, y 데이터 + isEqual() 로직 포함 (응집도 유지)
 │   │
-│   └── index.ts               # 외부에서 사용할 클래스들만 export
+│   ├── utils/                 # 순수 로직 및 헬퍼 함수
+│   │   ├── DirectionUtil.ts   # Direction Enum을 다루는 로직 분리
+│   │   └── ConsoleDebugger.ts # 개발 및 디버깅용 시각화 도구
+│   │
+│   ├── interfaces/            # 확장성을 위한 규약
+│   │
+│   ├── index.ts               # 라이브러리 정문 (외부 공개 모듈 export)
+│   └── play.ts                # 로컬 실행 및 테스트용 스크립트 (Manual/Auto)
 │
-├── tests/                     # 단위 테스트
+├── tests/                     # 테스트 코드
+│
+├── dist/                      # 빌드 결과물 (npm run build 시 생성)
+├── vite.config.ts             # 라이브러리 빌드 설정
 ├── package.json
 └── tsconfig.json
 ```
@@ -58,19 +69,9 @@ snake-game-lib/
 
 # 01. Position.ts
 
-X값과 Y값을 가지고 있는 Class
-
 # 02. Board.ts
 
-Map에 대한 정보 및 로직을 가지고 있는 Class
-
-초기값(맵 크기)을 설정할 수 있고, 현재 위치에 따라 내부에 있는지 충돌했는지 여부를 알 수 있다.
-
 # 03. Direction.ts
-
-방향 Enum을 제공하고,
-
-방향 관련 로직을 제공한다.
 
 # 04. Snake.ts
 
