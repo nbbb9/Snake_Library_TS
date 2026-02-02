@@ -34,7 +34,7 @@ export class ConsoleDebugger {
             `  ❤️ 현재 길이 : ${snake.body.length}`,
             `  -------------------`,
             `  📍 머리 좌표 : (${snake.head.x}, ${snake.head.y})`,
-            `  🕹️  상태     : ${GameStatus[this.engine.status]}`,
+            `  🕹️ 상태     : ${GameStatus[this.engine.status]}`,
         ];
 
         // --- 출력 문자열 생성 시작 ---
