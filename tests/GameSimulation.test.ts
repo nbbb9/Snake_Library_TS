@@ -7,7 +7,7 @@ import {Food} from "../src/domain/Food";
 
 import {GameEngine} from "../src/core/GameEngine"
 
-import { ConsoleDebugger } from "../src/utils/ConsoleDebugger";
+import { ConsoleDebugger } from "../src/examples/ConsoleDebugger";
 import {GameStatus} from "../src";
 
 describe('게임 시뮬레이션: 이동과 충돌', () => {

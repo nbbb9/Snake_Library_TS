@@ -25,7 +25,7 @@ export class ConsoleDebugger {
             foodCoord = `${food.position.x},${food.position.y}`;
         }
 
-        const currentScore = this.engine.score;
+        const currentScore = this.engine.totalEaten;
         // 각 줄(y)마다 오른쪽에 표시할 텍스트를 배열로 정의
         const sidebarLines: string[] = [
             `  📊 [ STATUS BOARD ]`,

@@ -16,8 +16,7 @@ export class Food {
         this.expiresIn = expiresIn;
     }
 
-    // 파기 여부 확인
-    get isExpired(): boolean { return this.expiresIn <= 0; }
+    get isExpired(): boolean { return this.expiresIn <= 0; }// 파기 여부 확인
     get position(): Position { return this._position; }
     get type() : FoodType { return this._type; }
 
@@ -29,5 +28,4 @@ export class Food {
             this.expiresIn--;
         }
     }
-
 }

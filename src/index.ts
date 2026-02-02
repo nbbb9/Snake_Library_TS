@@ -7,3 +7,4 @@ export { Position } from './value-objects/Position';
 
 export { Snake } from './domain/Snake';
 export { Board } from './domain/Board';
+export { Food } from './domain/Food';

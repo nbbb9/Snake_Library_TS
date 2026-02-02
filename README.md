@@ -49,7 +49,7 @@ snake-game-lib/
 │   ├── interfaces/            # 확장성을 위한 규약
 │   │
 │   ├── index.ts               # 라이브러리 정문 (외부 공개 모듈 export)
-│   └── play.ts                # 로컬 실행 및 테스트용 스크립트 (Manual/Auto)
+│   └── Play.ts                # 로컬 실행 및 테스트용 스크립트 (Manual/Auto)
 │
 ├── tests/                     # 테스트 코드
 │

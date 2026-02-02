@@ -31,8 +31,7 @@ export class Snake {
         }
     }
 
-    // [...this._body] : 스프레드 연산자. 원본 배열의 '복사본'을 반환. (방어적 복사)
-    get body(): Position[] { return [...this._body]; }
+    get body(): Position[] { return [...this._body]; }// [...this._body] : 스프레드 연산자. 원본 배열의 '복사본'을 반환. (방어적 복사)
     get head(): Position { return this._body[0]; }
     get direction(): Direction { return this._currentDirection; }
 
@@ -56,12 +55,12 @@ export class Snake {
 
     // 뱀의 이동 방향에 따른 다음 좌표 계산 메서드
     private getNextPosition(current: Position, direction: Direction): Position {
-        const delta = DirectionUtil.getMoveDelta(direction);
-        return new Position(current.x + delta.dx, current.y + delta.dy);
+        const delta = DirectionUtil.getMoveDelta(direction); // 인자로 받은 이동 방향의 실제 좌표 Delta값을 구한다.
+        return new Position(current.x + delta.dx, current.y + delta.dy); // delta값을 인자로 받은 position에 적용한다.
     }
 
     /**
-     * 뱀의 섭취 메서드. 음식의 타입에 따라 성장 또는 축소 가능
+     * 뱀의 섭취 메서드. 음식의 타입에 따라 성장 또는 축소
      * @param food
      * @return void
      */

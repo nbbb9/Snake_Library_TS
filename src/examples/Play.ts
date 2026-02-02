@@ -1,10 +1,10 @@
 import readline from 'readline';
-import { GameEngine } from './core/GameEngine';
-import { GameStatus } from './enums/GameStatus';
-import { Direction } from './enums/Direction';
-import { Position } from './value-objects/Position';
-import { ConsoleDebugger } from './utils/ConsoleDebugger';
-import { SoundPlayer } from './utils/SoundPlayer';
+import { GameEngine } from '../core/GameEngine';
+import { GameStatus } from '../enums/GameStatus';
+import { Direction } from '../enums/Direction';
+import { Position } from '../value-objects/Position';
+import { ConsoleDebugger } from './ConsoleDebugger';
+import { SoundPlayer } from './SoundPlayer';
 
 // --- [설정] ---
 const BOARD_WIDTH = 10;
