@@ -5,16 +5,16 @@ import { Direction } from '../enums/Direction';
 import { Position } from '../value-objects/Position';
 import { ConsoleDebugger } from './ConsoleDebugger';
 import { SoundPlayer } from './SoundPlayer';
+import {Board} from "../domain/Board";
+import {StepResult} from "../interfaces/IGameEngine";
 
-// --- [설정] ---
-const BOARD_WIDTH = 10;
-const BOARD_HEIGHT = 10;
-const GAME_SPEED_MS = 500; // Auto 모드 속도
+let currentGameSpeed: number = 500; // Auto 모드 속도
+const MAX_GAME_SPEED: number = 50; // 최대 속도 (50ms)
 const soundPlayer = new SoundPlayer(); // 음악 재생 객체
-
 // 엔진과 디버거를 재할당을 위해 const가 아닌 let으로 선언
 let engine: GameEngine;
 let debugView: ConsoleDebugger;
+let initBoard: Board;
 
 // 상태 관리
 type GameMode = 'NONE' | 'AUTO' | 'MANUAL' | 'GAME_OVER_WAIT'; // 게임 모드
@@ -23,14 +23,17 @@ let nextAutoDirection: Direction | undefined = undefined; // Auto 모드용 입�
 
 // 게임 엔진 초기화 함수 정의 (처음 시작할 때 & 재시작할 때 사용)
 function resetGame() {
+    initBoard = new Board(10, 10);
+
     engine = new GameEngine(
-        BOARD_WIDTH,
-        BOARD_HEIGHT,
+        initBoard,
         new Position(5, 5),
         Direction.RIGHT,
         3,
+        false, // 벽 충돌 시 사망 여부
         soundPlayer
     );
+
     debugView = new ConsoleDebugger(engine);
 }
 
@@ -60,23 +63,19 @@ process.stdin.on('keypress', (str, key) => {
         }
         return;
     }
-
     // 게임 오버 후 재시작 대기 상태 처리
     if (currentMode === 'GAME_OVER_WAIT') {
-        if (key.name === 'y' || key.name === 'Y') {
-            // Y: 재시작
+        if (key.name === 'y' || key.name === 'Y') { // 재시작
             console.clear();
-            resetGame(); // 엔진 새로 만들기 (점수, 상태 초기화)
+            resetGame(); // 엔진 새로 만들기 (초기화)
             currentMode = 'NONE'; // 메뉴 상태로 변경
             printMenu(); // 메뉴 출력
-        } else if (key.name === 'n' || key.name === 'N') {
-            // N: 종료
+        } else if (key.name === 'n' || key.name === 'N') { // 종료
             console.log("\n게임을 종료합니다.");
             process.exit();
         }
         return;
     }
-
     // 게임 진행 중
     const inputDir = mapKeyToDirection(key.name);
 
@@ -95,9 +94,6 @@ process.stdin.on('keypress', (str, key) => {
         }
     }
 });
-
-// 초기 메뉴 출력
-printMenu();
 
 // --- [함수 정의] ---
 function printMenu() {
@@ -118,21 +114,39 @@ function printMenu() {
     console.log("Press '1' or '2' to start...");
 }
 
+// 초기 메뉴 출력
+printMenu();
+
+// 자동모드일 경우 사용되는 게임 순환 메서드
+function gameLoop() {
+    if (engine.status === GameStatus.GAME_OVER || currentMode !== 'AUTO') {
+        return; // 루프 종료
+    }
+
+    // 엔진 실행 및 결과 받기 (StepResult)
+    const result = runGameStep(nextAutoDirection);
+    nextAutoDirection = undefined;
+
+    // 속도 조절 로직
+    // 예시 1: Grow 먹이를 먹을 때만 속도 10ms 감소 (빨라짐)
+    if (result && result.event === 'ATE_GROW') {
+        currentGameSpeed = Math.max(MAX_GAME_SPEED, currentGameSpeed - 10);
+        console.log(`속도 증가. 현재 속도: ${currentGameSpeed}ms`);
+    }
+    // 예시 2: 매 step마다 일정 속도씩 빨라짐
+    // currentGameSpeed = Math.max(MAX_GAME_SPEED, currentGameSpeed - 1);
+
+    // 다음 루프 예약 (변경된 속도 적용)
+    setTimeout(gameLoop, currentGameSpeed);
+}
+
 // Auto 모드 실행 (타이머 사용)
 function startAutoMode() {
     currentMode = 'AUTO';
     soundPlayer.playBgm('audios/bgm.mp3', 0.5);
     engine.start();
 
-    // 주기적으로 실행 (게임 루프)
-    const timer = setInterval(() => {
-        if (engine.status === GameStatus.GAME_OVER) {
-            clearInterval(timer);
-            return;
-        }
-        runGameStep(nextAutoDirection);
-        nextAutoDirection = undefined; // 입력 초기화
-    }, GAME_SPEED_MS);
+    gameLoop();
 }
 
 // Manual 모드 실행 (타이머 없음, 이벤트 기반)
@@ -145,10 +159,10 @@ function startManualMode() {
 }
 
 // 공통: 게임 로직 한 단계 실행 및 화면 갱신
-function runGameStep(dir?: Direction) {
+function runGameStep(dir?: Direction): StepResult | undefined {
     console.clear();
     // 엔진 실행
-    engine.step(dir);
+    const result = engine.step(dir);
     // 화면 그리기
     const modeTitle = currentMode === 'AUTO' ? "🤖 Auto Mode" : "👤 Manual Mode";
     debugView.print(`${modeTitle} (Ctrl+C to Exit)`);
@@ -166,6 +180,8 @@ function runGameStep(dir?: Direction) {
         //     process.exit();
         // }, 3000);
     }
+
+    return result;
 }
 
 // 키 이름을 Direction Enum으로 변환

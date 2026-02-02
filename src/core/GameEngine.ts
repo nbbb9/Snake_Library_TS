@@ -5,6 +5,7 @@ import { Position } from '../value-objects/Position';
 import { GameStatus } from '../enums/GameStatus';
 import { Food } from "../domain/Food";
 import { FoodType } from "../enums/FoodType";
+import { StepResult } from "../interfaces/IGameEngine";
 import { ISoundPlayer } from '../interfaces/ISoundPlayer';
 
 export class GameEngine {
@@ -13,33 +14,37 @@ export class GameEngine {
     private _status: GameStatus;
     private _food: Food | null = null;
     private _lastFoodPosition: Position | null = null; // 마지막 음식 위치
-    // TODO 음식 생성 확률과 음식 생존 시간을 모두 생성자에서 인자로 받아 설정하게 할 수 있다.
-    private readonly FOOD_SPAWN_CHANCE = 0.1; // 음식 생성 확률 ( 0.1 = 10% 확률로 매 step마다 생성 시도)
+    // TODO 음식 생성 확률과 음식 생존 시간, 긍정 음식 생성 비율을 모두 생성자에서 인자로 받아 설정하게 할 수 있다.
+    private readonly FOOD_SPAWN_RATE = 0.6; // 음식 생성 확률 ( 0.1 = 10% 확률로 매 step마다 생성 시도)
+    private readonly GROW_FOOD_GEN_RATE = 0.6; // 긍정 음식 생성 확률
     private readonly POISON_LIFETIME = 10; // 독성 음식 생존 시간 (n턴)
     private _totalEaten: number = 0; // 뱀이 먹은 총 '성장'먹이 개수(= 점수)
+    private _isWallCollideDeath: boolean = true; // 벽에 부딪히면 죽는지 여부(기본값 true)
     private _soundPlayer?: ISoundPlayer;
 
     constructor(
-        boardWidth: number, // 맵 가로
-        boardHeight: number, // 맵 세로
+        initBoard: Board, // 맵 초기 세팅
         snakeStartPosition: Position, // 뱀의 시작 위치(좌표)
         snakeStartDirection: Direction, // 뱀의 시작 방향
         snakeStartLength: number = 1, // 뱀의 시작 길이
+        isWallCollideDeath?: boolean, // 벽 충돌 시 사망 여부
         soundPlayer?: ISoundPlayer
     ) {
-        this._board = new Board(boardWidth, boardHeight);
+        this._board = initBoard;
         // TODO 여기서 뱀의 시작 지점이 맵의 사이즈 밖이라면 에러 로직 추가해야함.
         this._snake = new Snake(snakeStartPosition, snakeStartDirection, snakeStartLength);
         this._status = GameStatus.READY; // 초기 게임의 상태는 무조건 '준비'이다.
         this._totalEaten = 0;
+        this._isWallCollideDeath = isWallCollideDeath ? isWallCollideDeath : true;
         this._soundPlayer = soundPlayer;
     }
 
-    get status(): GameStatus { return this._status; }
+    get status() : GameStatus { return this._status; }
     get snake(): Snake { return this._snake; }
     get board(): Board { return this._board; }
     get food() : Food | null { return this._food; }
     get totalEaten(): number { return this._totalEaten; }
+    get isWallCollideDeath() : boolean { return this._isWallCollideDeath }
 
     /**
      * 게임을 시작상태로 설정
@@ -57,11 +62,11 @@ export class GameEngine {
      * @param inputDirection 사용자가 입력한 방향. 없으면 가던 방향으로 계속 감.
      * @returns 진행 결과 상태
      */
-    step(inputDirection?: Direction): GameStatus {
+    step(inputDirection?: Direction): StepResult {
         // 게임 중이 아니라면 로직을 수행하지 않음
         if (this._status !== GameStatus.PLAYING) {
             console.log("Game is not playing")
-            return this._status;
+            return { status: this._status, event: 'NONE' };
         }
         // TODO 내부에 복잡한 로직을 메서드로 분리?
         if (this._food === null) { // 음식이 맵에 존재하지 않을경우 랜덤으로 음식을 생성한다.
@@ -84,30 +89,40 @@ export class GameEngine {
         }
         // 벽 충돌 체크 (Rule Check)
         // 뱀의 머리가 보드 밖으로 나갔다면 게임 오버
-        if (this._board.isCollide(this._snake.head)) {
-            this._status = GameStatus.GAME_OVER;
-            return this._status;
+        if (this._isWallCollideDeath) {
+            if (this._board.isCollide(this._snake.head)) {
+                this._status = GameStatus.GAME_OVER;
+                return { status: this._status, event: 'WALL_COLLIDE' };
+            }
+        } else {
+            // TODO 벽에 부딪혀도 죽지 않는다면...?
         }
-        // 먹이 섭취.
+
+        let currentEvent: StepResult['event'] = 'MOVED';
+
+        // 먹이 섭취
         if (this._food && this._food.position.isEqual(this._snake.head)) {
+
             // soundPlayer가 있으면 play() 호출, 없으면 아무 일도 안 일어남 (에러 안 남)
             if (this._food.type === FoodType.GROW) {
+                currentEvent = 'ATE_GROW';
                 this._totalEaten++;
                 this._soundPlayer?.playSfx('audios/eat-grow.mp3', 0.9);
             } else if (this._food.type === FoodType.POISON) {
+                currentEvent = 'ATE_POISON';
                 this._soundPlayer?.playSfx('audios/eat-hurt.mp3', 0.9);
             }
 
             this._snake.eat(this._food);
             if (this._snake.body.length === 0) { // 독을 먹어서 몸이 사라졌다면(길이 0) 게임 오버
                 this._status = GameStatus.GAME_OVER;
-                return this._status;
+                return { status: this._status, event: currentEvent }
             }
             this._lastFoodPosition = this._food.position; // 먹힌 위치 기억
             this._food = null; // 음식 사라짐
         }
 
-        return this._status;
+        return { status: this._status, event: currentEvent };
     }
 
     // --- 음식 생성 관련 메서드 ---
@@ -115,7 +130,7 @@ export class GameEngine {
      * 확률에 따라 음식을 생성
      */
     private trySpawnFood(): void {
-        if (Math.random() < this.FOOD_SPAWN_CHANCE) {
+        if (Math.random() < this.FOOD_SPAWN_RATE) {
             this.spawnFood();
         }
     }
@@ -132,11 +147,9 @@ export class GameEngine {
     }
     /**
      * 조건에 맞는 랜덤 타입 반환
-     * 50:50 확률로 결정 (나중에 확률 조정 가능)
      */
     private getRandomFoodType(): FoodType {
-        // TODO 여기서 음식의 비율을 설정값으로 받도록 설정할 수 있다.
-        return Math.random() < 0.5 ? FoodType.GROW : FoodType.POISON;
+        return Math.random() < this.GROW_FOOD_GEN_RATE ? FoodType.GROW : FoodType.POISON;
     }
     /**
      * 유효한 빈 좌표를 찾는다

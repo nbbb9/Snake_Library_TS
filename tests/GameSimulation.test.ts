@@ -96,9 +96,17 @@ describe("먹이 테스트", () => {
 describe("게임 엔진 테스트", () => {
     it('', () => {
         const snakeStartPosition = new Position(5, 5)
-        const engine = new GameEngine(10, 10, snakeStartPosition, Direction.RIGHT, 3)
-        const consoleDebugger = new ConsoleDebugger(engine)
 
+        const initBoard: Board = new Board(10, 10);
+
+        const engine = new GameEngine(
+            initBoard,
+            snakeStartPosition,
+            Direction.RIGHT,
+            3
+        );
+
+        const consoleDebugger = new ConsoleDebugger(engine)
 
         engine.start();
         consoleDebugger.print("시작")
@@ -125,8 +133,14 @@ describe('AI 봇 시뮬레이션', () => {
         // - 시작 길이: 3
         const width = 10;
         const height = 10;
+        const initBoard: Board = new Board(width, height);
         const startPos = new Position(5, 5);
-        const engine = new GameEngine(width, height, startPos, Direction.RIGHT, 3);
+        const engine = new GameEngine(
+            initBoard,
+            startPos,
+            Direction.RIGHT,
+            3
+        );
 
         // 시각화 도구 연결
         const debuggerView = new ConsoleDebugger(engine);
