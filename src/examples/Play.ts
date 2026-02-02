@@ -10,31 +10,38 @@ import { SoundPlayer } from './SoundPlayer';
 const BOARD_WIDTH = 10;
 const BOARD_HEIGHT = 10;
 const GAME_SPEED_MS = 500; // Auto 모드 속도
-
 const soundPlayer = new SoundPlayer(); // 음악 재생 객체
 
-// 엔진 및 디버거 초기화
-const engine = new GameEngine(
-    BOARD_WIDTH,
-    BOARD_HEIGHT,
-    new Position(5, 5),
-    Direction.RIGHT,
-    3,
-    soundPlayer
-);
+// 엔진과 디버거를 재할당을 위해 const가 아닌 let으로 선언
+let engine: GameEngine;
+let debugView: ConsoleDebugger;
 
-const debugView = new ConsoleDebugger(engine);
+// 상태 관리
+type GameMode = 'NONE' | 'AUTO' | 'MANUAL' | 'GAME_OVER_WAIT'; // 게임 모드
+let currentMode: GameMode = 'NONE';
+let nextAutoDirection: Direction | undefined = undefined; // Auto 모드용 입력 버퍼
+
+// 게임 엔진 초기화 함수 정의 (처음 시작할 때 & 재시작할 때 사용)
+function resetGame() {
+    engine = new GameEngine(
+        BOARD_WIDTH,
+        BOARD_HEIGHT,
+        new Position(5, 5),
+        Direction.RIGHT,
+        3,
+        soundPlayer
+    );
+    debugView = new ConsoleDebugger(engine);
+}
+
+// 최초 초기화 실행
+resetGame();
 
 // 키 입력 설정
 readline.emitKeypressEvents(process.stdin);
 if (process.stdin.isTTY) {
     process.stdin.setRawMode(true);
 }
-
-// 상태 관리
-type GameMode = 'NONE' | 'AUTO' | 'MANUAL'; // 게임 모드
-let currentMode: GameMode = 'NONE';
-let nextAutoDirection: Direction | undefined = undefined; // Auto 모드용 입력 버퍼
 
 // --- [메인 로직: 키보드 이벤트 핸들러] ---
 process.stdin.on('keypress', (str, key) => {
@@ -53,6 +60,23 @@ process.stdin.on('keypress', (str, key) => {
         }
         return;
     }
+
+    // 게임 오버 후 재시작 대기 상태 처리
+    if (currentMode === 'GAME_OVER_WAIT') {
+        if (key.name === 'y' || key.name === 'Y') {
+            // Y: 재시작
+            console.clear();
+            resetGame(); // 엔진 새로 만들기 (점수, 상태 초기화)
+            currentMode = 'NONE'; // 메뉴 상태로 변경
+            printMenu(); // 메뉴 출력
+        } else if (key.name === 'n' || key.name === 'N') {
+            // N: 종료
+            console.log("\n게임을 종료합니다.");
+            process.exit();
+        }
+        return;
+    }
+
     // 게임 진행 중
     const inputDir = mapKeyToDirection(key.name);
 
@@ -106,10 +130,8 @@ function startAutoMode() {
             clearInterval(timer);
             return;
         }
-
         runGameStep(nextAutoDirection);
         nextAutoDirection = undefined; // 입력 초기화
-
     }, GAME_SPEED_MS);
 }
 
@@ -135,9 +157,14 @@ function runGameStep(dir?: Direction) {
         soundPlayer.stopBgm(); // 종료시 음악 정지
         soundPlayer.playSfx('audios/gameover.mp3', 0.2);
         console.log("\n💀 GAME OVER! 💀");
-        setTimeout(() => {
-            process.exit();
-        }, 3000);
+        console.log("=================================");
+        console.log(" 다시 하시겠습니까? (Y / N) ");
+        console.log("=================================");
+
+        currentMode = 'GAME_OVER_WAIT'; // 상태를 '대기'로 변경하여 키 입력을 기다림
+        // setTimeout(() => {
+        //     process.exit();
+        // }, 3000);
     }
 }
 
