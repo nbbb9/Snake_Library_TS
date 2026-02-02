@@ -40,19 +40,22 @@ snake-game-lib/
 │   │   └── GameStatus.ts      # READY, PLAYING, GAME_OVER
 │   │
 │   ├── value-objects/         # 데이터 + 불변 로직 (값 객체)
-│   │   └── Position.ts        # x, y 데이터 + isEqual() 로직 포함 (응집도 유지)
+│   │   └── Position.ts        # x, y 데이터 + isEqual() 로직 포함
 │   │
 │   ├── utils/                 # 순수 로직 및 헬퍼 함수
-│   │   ├── DirectionUtil.ts   # Direction Enum을 다루는 로직 분리
-│   │   └── ConsoleDebugger.ts # 개발 및 디버깅용 시각화 도구
+│   │   └── DirectionUtil.ts   # Direction Enum을 다루는 로직 분리
 │   │
 │   ├── interfaces/            # 확장성을 위한 규약
+│   │   └── ISoundPlayer.ts    # 사운드 플레이어 인터페이스
 │   │
-│   ├── index.ts               # 라이브러리 정문 (외부 공개 모듈 export)
-│   └── Play.ts                # 로컬 실행 및 테스트용 스크립트 (Manual/Auto)
+│   ├── examples/              # 라이브러리 사용 예제 코드
+│   │   ├── Play.ts            # 로컬 실행 및 테스트용 스크립트 (Manual/Auto)
+│   │   ├── ConsoleDebugger.ts # 개발 및 디버깅용 시각화 도구
+│   │   └── SoundPlayer.ts     # 사운드 플레이어 구현체
+│   │
+│   └── index.ts               # 라이브러리 정문 (외부 공개 모듈 export)
 │
 ├── tests/                     # 테스트 코드
-│
 ├── dist/                      # 빌드 결과물 (npm run build 시 생성)
 ├── vite.config.ts             # 라이브러리 빌드 설정
 ├── package.json
