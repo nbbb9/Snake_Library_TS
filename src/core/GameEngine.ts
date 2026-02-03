@@ -31,7 +31,14 @@ export class GameEngine {
         soundPlayer?: ISoundPlayer
     ) {
         this._board = initBoard;
-        // TODO 여기서 뱀의 시작 지점이 맵의 사이즈 밖이라면 에러 로직 추가해야함.
+
+        const {x, y} = snakeStartPosition;
+        const {width, height} = this._board;
+
+        if (x < 0 || x >= width || y < 0 || y >= height) {
+            throw new Error( `유효하지 않은 뱀의 시작 위치입니다 : (${x}, ${y}) / 맵의 크기는 (${width}x${height}).`)
+        }
+
         this._snake = new Snake(snakeStartPosition, snakeStartDirection, snakeStartLength);
         this._status = GameStatus.READY; // 초기 게임의 상태는 무조건 '준비'이다.
         this._totalEaten = 0;
