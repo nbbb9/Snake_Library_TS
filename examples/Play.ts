@@ -1,12 +1,12 @@
 import readline from 'readline';
-import { GameEngine } from '../core/GameEngine';
-import { GameStatus } from '../enums/GameStatus';
-import { Direction } from '../enums/Direction';
-import { Position } from '../value-objects/Position';
+import { GameEngine } from '../src/core/GameEngine';
+import { GameStatus } from '../src/enums/GameStatus';
+import { Direction } from '../src/enums/Direction';
+import { Position } from '../src/value-objects/Position';
 import { ConsoleDebugger } from './ConsoleDebugger';
 import { SoundPlayer } from './SoundPlayer';
-import {Board} from "../domain/Board";
-import {StepResult} from "../interfaces/IGameEngine";
+import {Board} from "../src/domain/Board";
+import {StepResult} from "../src/interfaces/IGameEngine";
 
 let currentGameSpeed: number = 500; // Auto 모드 속도
 const MAX_GAME_SPEED: number = 50; // 최대 속도 (50ms)

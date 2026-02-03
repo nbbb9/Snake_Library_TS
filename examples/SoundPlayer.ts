@@ -1,6 +1,6 @@
 import player from 'play-sound';
 import path from 'path';
-import { ISoundPlayer } from '../interfaces/ISoundPlayer';
+import { ISoundPlayer } from '../src/interfaces/ISoundPlayer';
 
 export class SoundPlayer implements ISoundPlayer {
     private player = player({});
