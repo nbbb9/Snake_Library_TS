@@ -51,6 +51,10 @@ export class GameEngine {
         this._soundPlayer = soundPlayer;
     }
 
+    get status() : GameStatus { return this._status; }
+    get snake(): Snake { return this._snake; }
+    get board(): Board { return this._board; }
+    get food() : Food | null { return this._food; }
     get totalGrowFoodEaten(): number { return this._totalGrowFoodEaten; }
     get totalPoisonFoodEaten(): number { return this._totalPoisonFoodEaten; }
     get isWallCollideDeath() : boolean { return this._isWallCollideDeath; }
