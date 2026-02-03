@@ -31,6 +31,7 @@ function resetGame() {
         Direction.RIGHT,
         3,
         false, // 벽 충돌 시 사망 여부
+        false,
         soundPlayer
     );
 
