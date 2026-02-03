@@ -52,6 +52,17 @@ export class Snake {
         this._currentDirection = direction; // 인자로 받은 방향을 현재 방향으로 설정
     }
 
+    /**
+     * 뱀이 자신의 몸에 충돌했는지 체크하는 메서드
+     * @returns true: collide, false: not collide
+     */
+    isSelfCollide(): boolean {
+        const head = this.head;
+        const body = this._body.slice(1); // 머리를 제외한 나머지 몸. 1번 인덱스부터 끝까지 자른 배열
+        // 몸통 중 머리와 좌표가 하나라도 같으면 충동(true) 반환
+        return body.some(position => position.isEqual(head));
+    }
+
     // 정반대 방향을 무시하는 메서드
     private ignoreOppositeDirection(direction: Direction): Direction {
         if (direction === DirectionUtil.getOppositeDirection(this._currentDirection)) {

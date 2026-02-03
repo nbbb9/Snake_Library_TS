@@ -21,6 +21,7 @@ export class GameEngine {
     private _totalGrowFoodEaten: number = 0; // 뱀이 먹은 총 '성장'먹이 개수(= 점수)
     private _totalPoisonFoodEaten: number = 0; // 뱀이 먹은 총 '독성'먹이 개수
     private _isWallCollideDeath: boolean = true; // 벽에 부딪히면 죽는지 여부(기본값 true)
+    private _isSelfCollideDeath: boolean = true; // 자기 자신과 충돌했을 경우 죽는지 여부(기본값 true)
     private _soundPlayer?: ISoundPlayer;
 
     constructor(
@@ -29,6 +30,7 @@ export class GameEngine {
         snakeStartDirection: Direction, // 뱀의 시작 방향
         snakeStartLength: number = 1, // 뱀의 시작 길이
         isWallCollideDeath?: boolean, // 벽 충돌 시 사망 여부
+        isSelfCollideDeath?: boolean, // 자신과 충돌했을 경우 사망 여부
         soundPlayer?: ISoundPlayer
     ) {
         this._board = initBoard;
@@ -45,16 +47,14 @@ export class GameEngine {
         this._status = GameStatus.READY; // 초기 게임의 상태는 무조건 '준비'이다.
         this._totalGrowFoodEaten = 0;
         this._isWallCollideDeath = isWallCollideDeath ? isWallCollideDeath : true;
+        this._isSelfCollideDeath = isSelfCollideDeath ? isSelfCollideDeath : true;
         this._soundPlayer = soundPlayer;
     }
 
-    get status() : GameStatus { return this._status; }
-    get snake(): Snake { return this._snake; }
-    get board(): Board { return this._board; }
-    get food() : Food | null { return this._food; }
     get totalGrowFoodEaten(): number { return this._totalGrowFoodEaten; }
     get totalPoisonFoodEaten(): number { return this._totalPoisonFoodEaten; }
-    get isWallCollideDeath() : boolean { return this._isWallCollideDeath }
+    get isWallCollideDeath() : boolean { return this._isWallCollideDeath; }
+    get isSelfCollideDeath() : boolean { return this._isSelfCollideDeath; }
 
     /**
      * 게임을 시작상태로 설정
