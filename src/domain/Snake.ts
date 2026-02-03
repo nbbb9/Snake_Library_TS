@@ -41,7 +41,7 @@ export class Snake {
      * @return void
      */
     move(direction: Direction): void {
-        // 현재 진행 방향의 반대 방향을 구하고 그쪽으로 꼬리를 늘린다.
+        // TODO 현재 진행방향과 180도 다른 방향이 입력되었을 경우 처리 방안.(현재는 강제로 현재 진행방향으로 변경함)
         if (direction === DirectionUtil.getOppositeDirection(this._currentDirection)) {
             direction = this._currentDirection;
         }
