@@ -1,6 +1,5 @@
 import {Position} from '../value-objects/Position';
-import {Direction} from '../enums/Direction';
-import {DirectionUtil} from "../utils/DirectionUtil";
+import {Direction, DirectionData} from '../enums/Direction';
 import {Food} from "./Food";
 import {FoodType} from "../enums/FoodType";
 
@@ -22,7 +21,7 @@ export class Snake {
         // 현재 머리 위치 기준으로 현재 위치 입력
         let lastPosition: Position = this.head;
         // 현재 뱀의 진행 방향의 반대방향을 꼬리의 방향으로 설정
-        const tailDirection: Direction = DirectionUtil.getOppositeDirection(this._currentDirection);
+        const tailDirection: Direction = DirectionData[this._currentDirection].opposite;
         // 현재 위치를 기준으로 꼬리 방향으로 몸통을 하나씩 증가
         for (let i = 1; i < length; i++) {
             const nextPosition: Position = this.getNextPosition(lastPosition, tailDirection);
@@ -65,7 +64,7 @@ export class Snake {
 
     // 정반대 방향을 무시하는 메서드
     private ignoreOppositeDirection(direction: Direction): Direction {
-        if (direction === DirectionUtil.getOppositeDirection(this._currentDirection)) {
+        if (direction === DirectionData[this._currentDirection].opposite) {
             return this._currentDirection;
         }
         return direction;
@@ -73,8 +72,8 @@ export class Snake {
 
     // 뱀의 이동 방향에 따른 다음 좌표 계산 메서드
     private getNextPosition(current: Position, direction: Direction): Position {
-        const delta = DirectionUtil.getMoveDelta(direction); // 인자로 받은 이동 방향의 실제 좌표 Delta값을 구한다.
-        return new Position(current.x + delta.dx, current.y + delta.dy); // delta값을 인자로 받은 position에 적용한다.
+        const { dx, dy } = DirectionData[direction];
+        return new Position(current.x + dx, current.y + dy);
     }
 
     /**
