@@ -42,15 +42,22 @@ export class Snake {
      */
     move(direction: Direction): void {
         // TODO 현재 진행방향과 180도 다른 방향이 입력되었을 경우 처리 방안.(현재는 강제로 현재 진행방향으로 변경함)
-        if (direction === DirectionUtil.getOppositeDirection(this._currentDirection)) {
-            direction = this._currentDirection;
-        }
+        direction = this.ignoreOppositeDirection(direction);
+
         // 뱀의 현재 머리 위치와 방향에 따라 새로운 머리 위치 계산
         const newHead = this.getNextPosition(this.head, direction);
 
         this._body.unshift(newHead); // 맨 앞에 하나 추가하고 머리로 설정
         this._body.pop(); // 맨 뒤에서 하나 제거
         this._currentDirection = direction; // 인자로 받은 방향을 현재 방향으로 설정
+    }
+
+    // 정반대 방향을 무시하는 메서드
+    private ignoreOppositeDirection(direction: Direction): Direction {
+        if (direction === DirectionUtil.getOppositeDirection(this._currentDirection)) {
+            return this._currentDirection;
+        }
+        return direction;
     }
 
     // 뱀의 이동 방향에 따른 다음 좌표 계산 메서드
