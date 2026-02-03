@@ -32,6 +32,7 @@ export class GameEngine {
     ) {
         this._board = initBoard;
 
+        // 구조 분해 할당. 각각의 Key에 대한 값을 꺼내서 똑같은 이름의 변수로 만든다.
         const {x, y} = snakeStartPosition;
         const {width, height} = this._board;
 
